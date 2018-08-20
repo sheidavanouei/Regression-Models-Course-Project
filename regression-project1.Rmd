@@ -1,0 +1,81 @@
+---
+title: "regression-course-project"
+author: "Sheida Vanouei"
+date: "August 19, 2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Executive Summary
+
+This report analyzed the relationship between transmission type (manual or automatic) and miles per gallon (MPG). The report set out to determine which transmission type produces a higher MPG. The mtcars dataset was used for this analysis.    
+
+###Load Data
+
+Load the dataset and convert categorical variables to factors.
+
+```{r cars}
+datasets::mtcars
+library(ggplot2)
+head(mtcars)
+
+```
+
+The dataset has 32 observations of 11 variables. We will do a quick analysis on the variables to gain some insight on the distribution of mpg and the two modes of transmission.
+
+##Exploratory Analysis
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+
+
+cor(mtcars$mpg, mtcars$am)
+cor(mtcars$mpg, mtcars)
+mtcars$vs <-  as.factor(mtcars$vs)
+mtcars$am <- as.factor(mtcars$am)
+
+```
+
+
+
+##boxplot
+
+```{r}
+Fit <- lm(mpg~am , data = mtcars)
+summary(Fit)
+boxplot(mpg ~ am, data = mtcars, col = (c("lightblue","darkblue")), ylab = "Miles Per Gallon", xlab = "Transmission Type")
+```
+ The graph leads us to believe that there is a significant increase in MPG when for vehicles with a manual transmission vs automatic  
+ 
+ ##Multivariable Regression Model
+```{r}
+bestFit <- lm(mpg~am + cyl + disp + hp + wt, data = mtcars)
+summary(bestFit)
+```
+ 
+The first model we will run is a linear regression model against mpg for each variable. This gives us insight into variables with coefficient significance as well as an initial attempt at explaining mpg. Additionally, we will also look at the correlation of variables with mpg to help us choose an appropriate model.
+
+```{r}
+anova(Fit, bestFit)
+```
+```{r}
+pairs(mpg ~ ., data = mtcars)
+```
+
+Additionally, we also plot the residuals to examine any heteroskedacity between the fitted and residual values; as well as to check for any non-normality.
+
+
+```{r}
+par(mfrow = c(2,2))
+```
+```{r}
+plot(bestFit)
+```
+ using the final multivariable regression model put together we can see the multiple R squared value is much higher at 0.855, where 85.5% of the regression variance can be explained by the chosen variables. We can thus conclude that 'wt' and 'cyl'are confounding variables in the relationship between 'am and 'mpg' and that manual transmission cars on average have 1.55 miles per gallon more than automatic cars.   
+ 
+ ##Conclusion
+There is a difference in MPG based on transmission type. A manual transmission will have a slight MPG boost. However, it seems that weight, horsepower, & number of cylinders are more statistically significant when determining MPG.
